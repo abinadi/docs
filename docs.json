@@ -77,7 +77,8 @@
   },
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "dark": "/logo/dark.svg",
+    "href": "https://barrio7.org"
   },
   "navbar": {
     "links": [
