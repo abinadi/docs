@@ -1,0 +1,334 @@
+openapi: 3.0.0
+info:
+    title: 'Barrio7.org API'
+    description: 'An API for the La Senda application of barrio7.org'
+    contact:
+        name: 'Abinadi Ayerdis'
+        email: abinadi.ayerdis@gmail.com
+    version: '1.0'
+paths:
+    /api/users:
+        get:
+            x-codeSamples:
+                - lang: bash
+                  label: cURL Example
+                  source: |
+                      curl https://api.example.com/endpoint
+                - lang: go
+                  label: Go Example
+                  source: |
+                      // Your Go code here
+                - lang: java
+                  label: Java Example
+                  source: |
+                      // Your Java code here
+            summary: 'Retrieve a list of all the users along with their roles and organizaciones'
+            operationId: c457726701591d1183b53aa71fc13441
+            responses:
+                200:
+                    description: OK
+        post:
+            summary: 'Creates a user with assigned roles and organizaciones'
+            operationId: 592819a0265360b2014512d6dbfaf0e7
+            requestBody:
+                description: 'Request should be application/json'
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                nombre:
+                                    type: string
+                                email:
+                                    type: string
+                                organizaciones:
+                                    type: array
+                                    items:
+                                        type: string
+                                roles:
+                                    type: array
+                                    items:
+                                        type: string
+                            type: object
+                        example:
+                            nombre: 'Fulano de Tal'
+                            email: fulano@ejemplo.com
+                            organizaciones:
+                                - Obispado
+                            roles:
+                                - admin
+                                - asesor
+            responses:
+                201:
+                    description: CREATED
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserResult'
+                            examples:
+                                result:
+                                    summary: 'A result object'
+                                    value:
+                                        id: UUID
+                                        nombre: 'Fulano de tal'
+                                        email: fulano@ejemplo.com
+                                        organizaciones:
+                                            - Obispado
+                                            - 'Hombres jóvenes'
+                                        roles:
+                                            - admin
+                404:
+                    description: 'NOT FOUND'
+                422:
+                    description: 'Unprocessable Content'
+    '/api/users/{id}':
+        get:
+            summary: 'Retrieve a user along with their assigned roles and organizaciones'
+            operationId: 36a33ff774d5cba33c039dec2c3e0287
+            parameters:
+                -   name: id
+                    in: path
+                    description: 'User id (should be a UUID)'
+                    required: true
+                    schema:
+                        type: string
+                    examples:
+                        uuid:
+                            summary: UUID
+                            value: 0006faf6-7a61-426c-9034-579f2cfcfa83
+            responses:
+                200:
+                    description: OK
+    '/api/users/{id}/organizaciones':
+        put:
+            summary: 'Overwrite all organizaciones assiged to a user with new list of organizaciones'
+            operationId: 14ca49e8299904cb3d216244882aa29d
+            parameters:
+                -   name: id
+                    in: path
+                    description: 'User id (should be a UUID)'
+                    required: true
+                    schema:
+                        type: string
+                    examples:
+                        uuid:
+                            summary: UUID
+                            value: 0006faf6-7a61-426c-9034-579f2cfcfa83
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                organizaciones:
+                                    type: array
+                                    items:
+                                        type: string
+                            type: object
+                        example:
+                            organizaciones:
+                                - 'Quorum de elderes'
+                                - 'Escuela dominical'
+                                - 'Hombres jóvenes'
+            responses:
+                200:
+                    description: OK
+                404:
+                    description: 'NOT FOUND'
+                422:
+                    description: 'Unprocessable Content'
+        post:
+            summary: 'Assign organizaciones to a user.'
+            operationId: e08243e3db600a5e1353345c49c27885
+            parameters:
+                -   name: id
+                    in: path
+                    description: 'User id (should be a UUID)'
+                    required: true
+                    schema:
+                        type: string
+                    examples:
+                        uuid:
+                            summary: UUID
+                            value: 0006faf6-7a61-426c-9034-579f2cfcfa83
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                organizaciones:
+                                    type: array
+                                    items:
+                                        type: string
+                            type: object
+                        example:
+                            organizaciones:
+                                - Obispado
+                                - 'Sociedad de socorro'
+                                - Primaria
+            responses:
+                201:
+                    description: CREATED
+                404:
+                    description: 'NOT FOUND'
+                422:
+                    description: 'Unprocessable Content'
+    '/api/users/{user_id}/organizaciones/{id}':
+        delete:
+            summary: 'Remove an organizacion from a user (unattach)'
+            operationId: d657ff27becdc0a0165665df85956697
+            parameters:
+                -   name: user_id
+                    in: path
+                    description: 'User id (should be a UUID)'
+                    required: true
+                    schema:
+                        type: string
+                    examples:
+                        uuid:
+                            summary: UUID
+                            value: 0006faf6-7a61-426c-9034-579f2cfcfa83
+                -   name: id
+                    in: path
+                    description: 'Organizacion id (should be a UUID)'
+                    required: true
+                    schema:
+                        type: string
+                    examples:
+                        uuid:
+                            summary: UUID
+                            value: 0006faf6-7a61-426c-9034-579f2cfcfa83
+            responses:
+                202:
+                    description: ACCEPTED
+                404:
+                    description: 'NOT FOUND'
+                422:
+                    description: 'Unprocessable Content'
+    '/api/users/{id}/roles':
+        put:
+            summary: 'Overwrite all roles assiged to a user with new list of roles'
+            operationId: aadf67572f804fca38e11b79f2600bf5
+            parameters:
+                -   name: id
+                    in: path
+                    description: 'User id (should be a UUID)'
+                    required: true
+                    schema:
+                        type: string
+                    examples:
+                        uuid:
+                            summary: UUID
+                            value: 0006faf6-7a61-426c-9034-579f2cfcfa83
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                roles:
+                                    type: array
+                                    items:
+                                        type: string
+                            type: object
+                        example:
+                            roles:
+                                - admin
+                                - consejero
+            responses:
+                200:
+                    description: OK
+                404:
+                    description: 'NOT FOUND'
+                422:
+                    description: 'Unprocessable Content'
+        post:
+            summary: 'Assign roles to a user.'
+            operationId: 19333c5136990c40ebb7e94751d9fd3b
+            parameters:
+                -   name: id
+                    in: path
+                    description: 'User id (should be a UUID)'
+                    required: true
+                    schema:
+                        type: string
+                    examples:
+                        uuid:
+                            summary: UUID
+                            value: 0006faf6-7a61-426c-9034-579f2cfcfa83
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                roles:
+                                    type: array
+                                    items:
+                                        type: string
+                            type: object
+                        example:
+                            roles:
+                                - presidente
+                                - asesor
+            responses:
+                201:
+                    description: CREATED
+                404:
+                    description: 'NOT FOUND'
+                422:
+                    description: 'Unprocessable Content'
+    '/api/users/{user_id}/roles/{id}':
+        delete:
+            summary: 'Remove a role from a user (unattach)'
+            operationId: ffc5726fcfad4bfbbee7fd95fddf1b3a
+            parameters:
+                -   name: user_id
+                    in: path
+                    description: 'User id (should be a UUID)'
+                    required: true
+                    schema:
+                        type: string
+                    examples:
+                        uuid:
+                            summary: UUID
+                            value: 0006faf6-7a61-426c-9034-579f2cfcfa83
+                -   name: id
+                    in: path
+                    description: 'Role id (should be a UUID)'
+                    required: true
+                    schema:
+                        type: string
+                    examples:
+                        uuid:
+                            summary: UUID
+                            value: 0006faf6-7a61-426c-9034-579f2cfcfa83
+            responses:
+                202:
+                    description: ACCEPTED
+                404:
+                    description: 'NOT FOUND'
+                422:
+                    description: 'Unprocessable Content'
+components:
+    schemas:
+        UserResult:
+            title: User
+            properties:
+                id:
+                    type: string
+                nombre:
+                    type: string
+                email:
+                    type: string
+                organizaciones:
+                    type: array
+                    items:
+                        type: string
+                roles:
+                    type: array
+                    items:
+                        type: string
+            type: object
+    securitySchemes:
+        sanctum:
+            type: apiKey
+            description: 'Enter token in format (Bearer <token>)'
+            name: Authorization
+            in: header
